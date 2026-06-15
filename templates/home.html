@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{% endblock title %}
+
+{% block content %}
+
+<h1>Below is the list of all the objects in the database</h1>
+
+
+
+<table border="2px">
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+    </tr>
+    {% for n in nigga %}
+    <tr>
+        <td>{{ n.name }}</td>
+        <td>{{ n.age }}</td>
+        <td>{{ n.gender }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}
