@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{% endblock title %}
+{% block title %}Home{% endblock title %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
         <th>Age</th>
         <th>Gender</th>
     </tr>
-    {% for i in items %}
+    {% for i in data %}
     <tr>
         <td>{{ i.name }}</td>
         <td>{{ i.age }}</td>
@@ -28,7 +28,7 @@
 <form method="POST">
     {% csrf_token %}
     <label>Name: <input type="text" name="name"></label>
-    <label>Age: <input type="text" name="age"></label>
+    <label>Age: <input type="number" name="age" min="0"></label>
     <label>Gender: <input type="text" name="gender"></label>
     <button type='submit'>Submit</button>
 </form>

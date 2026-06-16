@@ -1,45 +1,26 @@
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView,ListView
+from django.shortcuts import render,redirect
 from django.views import View
 from .models import db
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate, logout
 
-
-class home(View):
-    def get(self, request):
-        items=db.objects.all().order_by('age')
-        return render(request, 'home.html', { 'items': items })
-    
-    def post(self, request):
-        db.objects.create(
-            name=request.POST.get('name'),
-            age=request.POST.get('age'),
-            gender=request.POST.get('gender')
-        )
-        return redirect('home')
 
 class Login(View):
     def get(self, request):
         return render(request, 'login.html')
     
     def post(self, request):
-        username=request.POST.get('username')
-        password=request.POST.get('pass')
-
-        user=authenticate(request, username=username, password=password)
-
+        user=authenticate(request, username=request.POST.get('username'),
+                          password=request.POST.get('password'))
+        
         if user is not None:
             login(request, user)
             return redirect('home')
-        
-        else:
-            return redirect('register')      
 
 class register(View):
     def get(self, request):
         return render(request, 'register.html')
-    
+
     def post(self, request):
         username=request.POST.get('username')
         pass1=request.POST.get('pass1')
@@ -48,16 +29,28 @@ class register(View):
         if pass1==pass2:
             if User.objects.filter(username=username).exists():
                 return redirect('login')
-            
             else:
-                User.objects.create_user(
-                    username=request.POST.get('username'),
-                    password=request.POST.get('pass1')
-                    )
+                user=User.objects.create_user(username=username, password=pass1)
+                login(request, user)
                 return redirect('home')
+        
         else:
-            return render(request, 'register.html', { 'pass_error': 'enter the same passwords in both fields' })
-        
-        
-        
+            return render(request, 'register.html', { 'pass_err':'enter the same password in both fields' })
+
+class home(View):
+    def get(self, request):
+        data=db.objects.all()
+        return render(request, 'home.html', { 'data':data })
+    
+    def post(self, request):
+        db.objects.create(
+            name=request.POST.get('name'),
+            age=request.POST.get('age'),
+            gender=request.POST.get('gender'),
+            user=request.user,
+        )
+        return redirect('home')
+
+
+
 
