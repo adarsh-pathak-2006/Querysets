@@ -1,8 +1,12 @@
 from django.shortcuts import render,redirect
 from django.views import View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import db
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
+from .serializer import db_serializer
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class Login(View):
@@ -16,6 +20,8 @@ class Login(View):
         if user is not None:
             login(request, user)
             return redirect('home')
+        else:
+            return render(request,'login.html')
 
 class register(View):
     def get(self, request):
@@ -37,9 +43,9 @@ class register(View):
         else:
             return render(request, 'register.html', { 'pass_err':'enter the same password in both fields' })
 
-class home(View):
+class home(LoginRequiredMixin, View):
     def get(self, request):
-        data=db.objects.all()
+        data=db.objects.filter(user=request.user)
         return render(request, 'home.html', { 'data':data })
     
     def post(self, request):
@@ -51,6 +57,24 @@ class home(View):
         )
         return redirect('home')
 
+class apiView(LoginRequiredMixin, APIView):
+    def get(self, request):
+        data=db.objects.filter(user=request.user)
+        serialized=db_serializer(data, many=True)
+        return Response(serialized.data)
+
+    def post(self, request):
+        serialized=db_serializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return redirect('apiview')
+        else:
+            print('Hail Hitler')
 
 
-
+class individual(APIView):
+    def get(self, request, id):
+        data=db.objects.filter(user=request.user).get(id=id)
+        serialized=db_serializer(data)
+        return Response(serialized.data)
+    
