@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}F1 Driver info{% endblock title %}
+
+{% block content %}
+
+<form method='POST'>
+    {% csrf_token %}
+
+    {{ form }}
+    <button type='submit'>Submit</button>
+
+</form>
+
+<table>
+    <tr>
+        <th>Driver</th>
+        <th>Team</th>
+    </tr>
+    {% for d in data %}
+    <tr>
+        <td>{{ d.driver }} </td>
+        <td>{{ d.team }} </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+{% endblock content %}

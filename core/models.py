@@ -9,3 +9,11 @@ class db(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class f1(models.Model):
+    driver=models.CharField(max_length=50)
+    team=models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.driver

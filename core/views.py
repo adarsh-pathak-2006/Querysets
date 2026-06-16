@@ -2,11 +2,12 @@ from django.shortcuts import render,redirect
 from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import db
+from .models import db, f1
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .serializer import db_serializer
+from .serializer import db_serializer, f1_serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import driver
 
 
 class Login(View):
@@ -71,10 +72,33 @@ class apiView(LoginRequiredMixin, APIView):
         else:
             print('Hail Hitler')
 
-
 class individual(APIView):
     def get(self, request, id):
-        data=db.objects.filter(user=request.user).get(id=id)
+        data=db.objects.get(user=request.user,id=id)
         serialized=db_serializer(data)
         return Response(serialized.data)
+
+class f1view(View):
+    def get(self, request):
+        form=driver
+        data=f1.objects.all()
+        return render(request, 'driver.html', { 'form':form,'data':data })
     
+    def post(self, request):
+        data=driver(request.POST)
+        if data.is_valid():
+            data.save()
+            return redirect('driver')
+        
+
+class f1api(APIView):
+    def get(self, request):
+        data=f1.objects.all()
+        serialized=f1_serializer(data, many=True)
+        return Response(serialized.data)
+    
+    def post(self, request):
+        serialized=f1_serializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return redirect('f1api')
