@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Movies || Home{% endblock title %}
+
+{% block content %}
+
+<a href="{% url "movie_home" %}">Home</a>
+<a href="{% url "add" %}">create</a>
+
+{% for m in movie %}
+
+<h2>{{ m.name }}</h2>
+{{ m.description }}
+
+{% endfor %}
+
+{% endblock content %}
