@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import driver
 
 
+
 class Login(View):
     def get(self, request):
         return render(request, 'login.html')
@@ -102,3 +103,4 @@ class f1api(APIView):
         if serialized.is_valid():
             serialized.save()
             return redirect('f1api')
+        

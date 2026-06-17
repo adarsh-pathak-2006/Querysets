@@ -6,4 +6,5 @@ class driver(ModelForm):
     class Meta:
         model=f1
         fields=['driver','team']
-        
+    
+
